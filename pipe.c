@@ -7,6 +7,7 @@ int main(){
 int fd[2];
 if(pipe(fd)==-1){
 fprintf(stderr,"can't pipe %d", strerror(errorno));
+printf("saeed");
 }
 return 0;
 }
