@@ -1,25 +1,43 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-void handler(int sig){
 
-printf("can't get killed");
 
+void handle_interrupt(int sig)
+{
+printf("signal %d has been received", sig);	
+exit(1);
 }
 
-int main(int argc, char *argv[] ){
-
+int catch_signal(int sig, void (*handler) (int))
+{
 struct sigaction action;
 action.sa_handler = handler ;
 sigemptyset(&action.sa_mask);
 action.sa_flags = 0;
-sigaction(SIGINT,&action,NULL);
+sigaction( sig, &action , NULL);
+}		
 
-char name[30];
-printf("please enter your name");
-fgets(name, 30 , stdin);
-printf("hello %s\n", name);
+
+int main()
+{
+
+//use the struct sigaction
+if(catch_signal(SIGINT, handle_interrupt)==-1){
+
+fprintf(stderr, "can't map the handler");
+exit(2);
+}
+
+raise(SIGINT);
+
+while(1)
+	sleep(1);
+	
 
 return 0;
+
+
 }
